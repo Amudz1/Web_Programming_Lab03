@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Анимация 6</title>
+
+<style>
+  body {
+    margin: 0;
+    background: #000;
+    color: #ccc;
+    font-family: Arial, sans-serif;
+  }
+
+  h1 {
+    padding: 20px;
+    font-size: 32px;
+    text-align: center;
+  }
+  
+  .description {
+            text-align: justify;
+            margin-bottom: 40px;
+            color: #ccc;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+  .scene {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+  }
+
+  .frame {
+    border: 6px solid #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    height: 300px;
+  }
+
+  .panel {
+    width: 500px;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+</style>
+</head>
+<body>
+
+<h1>Анимация 6</h1>
+<p class="description">
+    Этапы анимации:<br>
+    1) точки плавно движутся друг на встречу другу и обратно замедляя свой ход;<br>
+    2) точки постепенно перестраиваются на движение волной;<br>
+    3) точки перестраиваются в исходное состояние.
+</p>
+<div class="scene">
+  <div class="frame">
+    <div class="panel" id="panel"></div>
+  </div>
+</div>
+
+<script>
+const DOTS = 7;
+const DURATION = 5000;
+
+const panel = document.getElementById('panel');
+
+let dots = [];
+
+function createDots() {
+  for (let i = 0; i < DOTS; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.style.top = (i / (DOTS - 1)) * 100 + '%';
+    panel.appendChild(d);
+    dots.push({
+      el: d,
+      baseY: (i / (DOTS - 1)) * 100
+    });
+  }
+}
+
+createDots();
+
+let start = null;
+
+function animate(t) {
+  if (!start) start = t;
+  const progress = (t - start) / DURATION;
+
+  // 1. Расход в 2 линии и обратно
+  if (progress < 1) {
+    const p = progress < 0.5 ? easeInOut(progress * 2) : easeInOut((1 - progress) * 2);
+    dots.forEach((d, i) => {
+      const offset = (i % 2 === 0 ? -30 : 30) * p;
+      d.el.style.left = 50 + offset + '%';
+    });
+  }
+
+  // 2. Волна
+  else if (progress < 2) {
+    const p = progress - 1;
+    dots.forEach((d, i) => {
+      const wave = Math.sin(p * 6 + i * 0.5) * 20;
+      d.el.style.left = 50 + wave + '%';
+    });
+  }
+
+  // 3. Возврат к исходному
+  else if (progress < 3) {
+    const p = easeInOut(progress - 2);
+    dots.forEach((d) => {
+      const current = parseFloat(d.el.style.left);
+      d.el.style.left = current + (50 - current) * p + '%';
+    });
+  }
+
+  // Перезапуск
+  else {
+    start = null;
+  }
+
+  requestAnimationFrame(animate);
+}
+
+function easeInOut(t) {
+  return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+}
+
+requestAnimationFrame(animate);
+</script>
+
+</body>
+</html>

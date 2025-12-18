@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Анимация 8</title>
+
+<style>
+body {
+  background: #000;
+  font-family: Arial, sans-serif;
+  color: #ccc;
+  margin: 0;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 32px;
+}
+
+.wrapper {
+  width: 360px;
+  margin: 40px auto;
+  border: 5px solid white;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.slide {
+  height: 80px;
+  background: #35aa7c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 30px;
+  border-bottom: 4px solid white;
+  position: relative;
+}
+
+.slide:last-child {
+  border-bottom: none;
+}
+
+.counter {
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  margin: 0 auto;
+}
+
+/* ===== ARROW ===== */
+
+.arrow {
+  width: 50px;
+  height: 10px;
+  position: absolute;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.5s;
+}
+
+.arrow.left {
+  left: 30px;
+}
+
+.arrow.right {
+  right: 30px;
+}
+
+.arrow.hidden {
+  display: none;
+}
+
+.arrow::before {
+  content: '>';
+  position: absolute;
+  color: white;
+  font-size: 32px;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: all 0.4s ease;
+}
+
+.arrow.left::before {
+  content: '<';
+    position: absolute;
+  color: white;
+  font-size: 32px;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: all 0.4s ease;
+}
+
+
+.arrow:hover::before {
+  transform: translateX(-50%) scale(1.5);
+}
+
+/* EXPAND - стрелка открыта */
+.arrow.expand {
+  opacity: 1;
+}
+.arrow.expand::before {
+  transform: translateX(-50%) scale(1.5);
+}
+
+/* COLLAPSE - полоска */
+.arrow.collapse {
+  opacity: 0.5;
+}
+.arrow.collapse::before {
+  content: '-';
+font-size: 32px;
+  transform: translateX(-50%) scale(1.2);
+}
+</style>
+</head>
+
+<body>
+
+<h1>Анимация 8</h1>
+
+<div class="wrapper">
+  <div class="slide">
+    <div class="arrow left hidden collapse" id="left-arrow"></div>
+    <div class="counter" id="counter">1 / 5</div>
+    <div class="arrow right expand" id="right-arrow"></div>
+  </div>
+</div>
+
+<script>
+let current = 1;
+const max = 5;
+const counter = document.getElementById('counter');
+const leftArrow = document.getElementById('left-arrow');
+const rightArrow = document.getElementById('right-arrow');
+
+function updateArrows() {
+  // Сброс классов
+  leftArrow.classList.remove('expand', 'collapse', 'hidden');
+  rightArrow.classList.remove('expand', 'collapse', 'hidden');
+
+  if (current === 1) {
+    leftArrow.classList.add('collapse');
+    rightArrow.classList.add('expand');
+  } else if (current === max) {
+    leftArrow.classList.add('expand');
+    rightArrow.classList.add('collapse');
+  } else {
+    leftArrow.classList.add('expand');
+    rightArrow.classList.add('expand');
+  }
+}
+
+rightArrow.addEventListener('click', () => {
+  if (current < max) {
+    current++;
+    counter.textContent = `${current} / ${max}`;
+    updateArrows();
+  }
+});
+
+leftArrow.addEventListener('click', () => {
+  if (current > 1) {
+    current--;
+    counter.textContent = `${current} / ${max}`;
+    updateArrows();
+  }
+});
+
+// Инициализация
+updateArrows();
+</script>
+
+</body>
+</html>
